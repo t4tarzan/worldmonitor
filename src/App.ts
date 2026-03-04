@@ -38,6 +38,7 @@ import { PanelLayoutManager } from '@/app/panel-layout';
 import { DataLoaderManager } from '@/app/data-loader';
 import { EventHandlerManager } from '@/app/event-handlers';
 import { resolveUserRegion, resolvePreciseUserCoordinates, type PreciseCoordinates } from '@/utils/user-location';
+import { initStdb } from '@/services/stdb-bootstrap';
 
 const CYBER_LAYER_ENABLED = import.meta.env.VITE_ENABLE_CYBER_LAYER === 'true';
 
@@ -460,6 +461,24 @@ export class App {
     // Start deep link handling early — its retry loop polls hasSufficientData()
     // independently, so it must not be gated behind loadAllData() which can hang.
     this.handleDeepLinks();
+
+    // Phase 5b: SpacetimeDB real-time collab (non-blocking, gated by VITE_COLLAB_ENABLED)
+    const stdbPresenceEl = document.getElementById('presence-bar-mount');
+    const stdbUserId = localStorage.getItem('wm-analyst-id') ?? (() => {
+      const id = crypto.randomUUID();
+      localStorage.setItem('wm-analyst-id', id);
+      return id;
+    })();
+    const stdbDisplayName = localStorage.getItem('wm-analyst-name') ?? `Analyst-${stdbUserId.slice(0, 6)}`;
+    const stdbColors = ['#6366f1','#f59e0b','#10b981','#ef4444','#3b82f6','#ec4899','#8b5cf6','#14b8a6'];
+    const stdbColor = stdbColors[parseInt(stdbUserId.slice(0, 2), 16) % stdbColors.length] ?? '#6366f1';
+    initStdb({
+      userId: stdbUserId,
+      displayName: stdbDisplayName,
+      color: stdbColor,
+      variant: SITE_VARIANT ?? 'full',
+      presenceContainer: stdbPresenceEl ?? undefined,
+    });
 
     // Phase 6: Data loading
     this.dataLoader.syncDataFreshnessWithLayers();
