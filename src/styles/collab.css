@@ -298,6 +298,39 @@
 .finding-ack-btn.done { color: #86efac; border-color: #166534; cursor: default; }
 .finding-ack-btn:not(.done):hover { background: #166534; color: #bbf7d0; }
 
+/* ---- Collab Overlay positioning ---- */
+.collab-overlay {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 900;
+  pointer-events: none;
+}
+.collab-overlay > * {
+  pointer-events: all;
+}
+
+/* ---- Header toggle buttons ---- */
+.collab-toggle-btn {
+  background: var(--surface-secondary, #1a1a2e);
+  border: 1px solid var(--border-subtle, #2a2a3e);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-primary, #e2e8f0);
+  transition: background 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+.collab-toggle-btn:hover { background: var(--surface-hover, #22223a); }
+.collab-toggle-btn.active {
+  border-color: var(--accent, #6366f1);
+  background: var(--accent-muted, #312e81);
+}
+
 /* ---- Shared empty state ---- */
 .empty-state {
   font-size: 11px;
