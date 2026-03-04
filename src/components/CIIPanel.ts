@@ -163,4 +163,18 @@ export class CIIPanel extends Panel {
   public getScores(): CountryScore[] {
     return this.scores;
   }
+
+  public patchLiveScore(code: string, score: number, trend: number): void {
+    const existing = this.scores.find(s => s.code === code);
+    if (!existing) return;
+    existing.score = Math.round(score);
+    existing.trend = trend > 0 ? 'rising' : trend < 0 ? 'falling' : 'stable';
+    existing.change24h = trend;
+    const el = this.content.querySelector<HTMLElement>(`.cii-country[data-code="${code}"]`);
+    if (el) {
+      const replacement = this.buildCountry(existing);
+      el.replaceWith(replacement);
+      this.bindShareButtons();
+    }
+  }
 }

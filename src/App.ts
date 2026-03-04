@@ -472,12 +472,16 @@ export class App {
     const stdbDisplayName = localStorage.getItem('wm-analyst-name') ?? `Analyst-${stdbUserId.slice(0, 6)}`;
     const stdbColors = ['#6366f1','#f59e0b','#10b981','#ef4444','#3b82f6','#ec4899','#8b5cf6','#14b8a6'];
     const stdbColor = stdbColors[parseInt(stdbUserId.slice(0, 2), 16) % stdbColors.length] ?? '#6366f1';
+    const ciiPanel = this.state.panels['cii'];
     initStdb({
       userId: stdbUserId,
       displayName: stdbDisplayName,
       color: stdbColor,
       variant: SITE_VARIANT ?? 'full',
       presenceContainer: stdbPresenceEl ?? undefined,
+      onCiiUpdate: ciiPanel && 'patchLiveScore' in ciiPanel
+        ? (code, score, trend) => (ciiPanel as import('@/components/CIIPanel').CIIPanel).patchLiveScore(code, score, trend)
+        : undefined,
     });
 
     // Phase 6: Data loading

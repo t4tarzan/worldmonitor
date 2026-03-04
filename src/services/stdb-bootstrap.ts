@@ -11,7 +11,7 @@ export interface StdbBootstrapOptions {
   color: string;
   variant: string;
   presenceContainer?: HTMLElement;
-  onCiiUpdate?: (code: string, score: number) => void;
+  onCiiUpdate?: (code: string, score: number, trend: number) => void;
   onIntelEvent?: (type: string, lat: number, lon: number, severity: number) => void;
 }
 
@@ -57,8 +57,8 @@ function _onConnected(conn: DbConnection, opts: StdbBootstrapOptions): void {
 
   if (opts.onCiiUpdate) {
     const cb = opts.onCiiUpdate;
-    onCiiUpdate(conn, (row) => {
-      cb(row.countryCode, Number(row.score) / 100);
+    onCiiUpdate(conn, (newRow) => {
+      cb(newRow.countryCode, Number(newRow.score), Number(newRow.trend));
     });
   }
 
