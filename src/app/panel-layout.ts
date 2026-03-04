@@ -42,6 +42,7 @@ import {
   AviationCommandBar,
 } from '@/components';
 import { SatelliteFiresPanel } from '@/components/SatelliteFiresPanel';
+import { AgentDashboardPanel } from '@/components/AgentDashboardPanel';
 import { PositiveNewsFeedPanel } from '@/components/PositiveNewsFeedPanel';
 import { CountersPanel } from '@/components/CountersPanel';
 import { ProgressChartsPanel } from '@/components/ProgressChartsPanel';
@@ -659,6 +660,9 @@ export class PanelLayoutManager implements AppModule {
         this.callbacks.openCountryBrief(code);
       });
       this.ctx.panels['cii'] = ciiPanel;
+
+      const agentDashboardPanel = new AgentDashboardPanel();
+      this.ctx.panels['agent-dashboard'] = agentDashboardPanel;
 
       const cascadePanel = new CascadePanel();
       this.ctx.panels['cascade'] = cascadePanel;

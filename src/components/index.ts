@@ -19,6 +19,7 @@ export * from './GdeltIntelPanel';
 export * from './LiveNewsPanel';
 export * from './LiveWebcamsPanel';
 export * from './CIIPanel';
+export * from './AgentDashboardPanel';
 export * from './CascadePanel';
 export * from './StrategicRiskPanel';
 export * from './StrategicPosturePanel';
