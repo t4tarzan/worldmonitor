@@ -526,6 +526,7 @@ const SIDECAR_ALLOWED_ORIGINS = [
   // The previous (.*\.)? pattern was overly broad. Anchored to prevent spoofing
   // via domains like worldmonitorEVIL.vercel.app.
   /^https:\/\/([a-z0-9-]+\.)?worldmonitor\.app$/,
+  /^https:\/\/([a-z0-9-]+\.)?wnbpc\.de$/,
 ];
 
 function getSidecarCorsOrigin(req) {
