@@ -36,4 +36,7 @@ jobs:
             echo "==> Building frontend"
             npm run build
 
-            echo "==> Deploy complete (dist served directly by nginx)"
+            echo "==> Restarting API sidecar"
+            systemctl restart worldmonitor-api
+
+            echo "==> Deploy complete (dist + API server restarted)"
