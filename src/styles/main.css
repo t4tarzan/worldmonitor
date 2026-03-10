@@ -508,24 +508,23 @@ canvas,
   vertical-align: middle;
 }
 
-.credit-link {
-  font-size: 9px;
-  color: var(--muted);
-  opacity: 0.6;
-  font-weight: normal;
-  letter-spacing: 0.5px;
+.get-monitor-btn {
+  font-size: 11px;
+  color: white;
+  background: var(--accent);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 600;
   text-decoration: none;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
 }
 
-.credit-link:hover {
-  opacity: 1;
-  color: var(--accent);
-}
-
-/* Hide X logo on desktop, show text */
-.credit-link .x-logo {
-  display: none;
+.get-monitor-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .status-indicator {
@@ -9923,7 +9922,7 @@ a.prediction-link:hover {
   .variant-switcher,
   .version,
   .beta-badge,
-  .credit-link,
+  .get-monitor-btn,
   .github-link,
   .region-selector,
   .mobile-settings-btn,
