@@ -1,0 +1,23 @@
+{
+  "name": "worldmonitor-auth-dependencies",
+  "description": "Additional dependencies needed for authentication and database features",
+  "dependencies": {
+    "pg": "^8.11.3",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "stripe": "^14.10.0",
+    "@vercel/node": "^3.0.12",
+    "resend": "^3.0.0",
+    "next-auth": "^4.24.5",
+    "@auth/core": "^0.18.6"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/pg": "^8.10.9"
+  },
+  "scripts": {
+    "db:migrate": "psql $DATABASE_URL -f database/schema.sql",
+    "db:reset": "psql $DATABASE_URL -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' && npm run db:migrate"
+  }
+}

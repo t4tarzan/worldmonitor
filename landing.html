@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldMonitor — Real-Time Global Intelligence Dashboard</title>
+    <meta name="description" content="Monitor conflicts, earthquakes, markets, and threats in real-time. 170+ data feeds, 45+ layers, AI-powered analysis. 100% open source.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favico/favicon.ico">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://worldmonitor.app">
+    <meta property="og:title" content="WorldMonitor — Real-Time Global Intelligence Dashboard">
+    <meta property="og:description" content="Monitor conflicts, earthquakes, markets, and threats in real-time. 170+ data feeds, 45+ layers, AI-powered analysis.">
+    <meta property="og:image" content="https://worldmonitor.app/favico/og-image.png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #0a0f0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-green: #10b981;
+            --accent-green-dark: #059669;
+            --border-color: #2a2a2a;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 15, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+        
+        .nav-cta {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        
+        .btn-primary {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--accent-green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 150px 2rem 100px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(16, 185, 129, 0.15), transparent);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .hero-cta .btn {
+            font-size: 1.1rem;
+            padding: 1rem 2rem;
+        }
+        
+        /* Stats Bar */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            display: block;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* Demo Section */
+        .demo {
+            padding: 100px 2rem;
+            background: var(--bg-secondary);
+        }
+        
+        .screenshot-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .screenshot-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .screenshot-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-green);
+        }
+        
+        .screenshot-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .screenshot-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .demo-preview {
+            margin-top: 3rem;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .demo-preview img {
+            width: 100%;
+            display: block;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 100px 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--accent-green);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured::before {
+            content: 'POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-green);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .pricing-card h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin: 1rem 0;
+        }
+        
+        .pricing-price span {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--accent-green);
+            font-weight: bold;
+            margin-right: 0.75rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 4rem 2rem 2rem;
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-section h4 {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.75rem;
+        }
+        
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-section a:hover {
+            color: var(--accent-green);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.25rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .stats {
+                gap: 2rem;
+            }
+            
+            .section-header h2 {
+                font-size: 2rem;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="/" class="logo">WorldMonitor</a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+                <li><a href="https://github.com/t4tarzan/worldmonitor" target="_blank">GitHub</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="/index.html" class="btn btn-secondary">Launch App</a>
+                <a href="#pricing" class="btn btn-primary">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Real-Time Global Intelligence Dashboard</h1>
+            <p>Monitor conflicts, earthquakes, markets, and threats with AI-powered insights. 170+ data feeds, 45+ layers, 21 languages. 100% open source.</p>
+            <div class="hero-cta">
+                <button onclick="launchDashboard()" class="btn btn-primary" style="border: none; cursor: pointer;">Launch Dashboard</button>
+                <button onclick="window.openOnboarding && window.openOnboarding()" class="btn btn-secondary" style="border: none; cursor: pointer;">Get My Monitor</button>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-number">170+</span>
+                    <span class="stat-label">Data Feeds</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">45+</span>
+                    <span class="stat-label">Map Layers</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">21</span>
+                    <span class="stat-label">Languages</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Open Source</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-header">
+            <h2>Everything You Need for Global Awareness</h2>
+            <p>Comprehensive intelligence gathering and analysis tools in one unified platform</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Dual Map Engine</h3>
+                <p>Switch between photorealistic 3D globe and WebGL flat map. 45+ toggleable data layers including conflicts, military bases, infrastructure, and real-time events.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Local LLM support with Ollama/LM Studio. AI-synthesized briefs, threat classification, focal point detection, and country instability scoring.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📰</div>
+                <h3>170+ News Feeds</h3>
+                <p>Curated RSS feeds across geopolitics, defense, energy, tech, and finance. Smart categorization with real-time updates and breaking news alerts.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📡</div>
+                <h3>Live Video Streams</h3>
+                <p>9+ default channels including Bloomberg, Sky News, Al Jazeera. 70+ additional sources available. HLS native streaming with fullscreen mode.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🛰️</div>
+                <h3>Satellite & Infrastructure</h3>
+                <p>Track military flights, naval vessels, undersea cables, pipelines, datacenters, and critical infrastructure. Real-time AIS and ADS-B data.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Market Intelligence</h3>
+                <p>7-signal macro radar, crypto prices, BTC ETF flows, stablecoin health, Fear & Greed Index. Gulf economies panel with live market data.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>21 Languages</h3>
+                <p>Fully localized interface with native-language RSS feeds. RTL support for Arabic and Hebrew. AI translation for cross-language intelligence.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Real-Time Monitoring</h3>
+                <p>Sub-60-second refresh on critical feeds. Custom keyword monitors, regional alerts, and multi-signal anomaly detection with baseline comparison.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💻</div>
+                <h3>Native Desktop App</h3>
+                <p>Tauri-based desktop application for macOS, Windows, and Linux. Local API sidecar, OS keychain integration, and offline map support.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="demo">
+        <div class="demo-container">
+            <div class="section-header">
+                <h2>See It In Action</h2>
+                <p>Experience different monitoring perspectives with our specialized variants</p>
+            </div>
+            
+            <!-- Screenshot Gallery -->
+            <div class="screenshot-gallery">
+                <div class="screenshot-item">
+                    <img src="/new-world-monitor.png" alt="WorldMonitor - Global View" loading="lazy">
+                    <div class="screenshot-label">Global Intelligence</div>
+                </div>
+                <div class="screenshot-item">
+                    <img src="/web-app-overview.jpg" alt="WorldMonitor - Finance View" loading="lazy">
+                    <div class="screenshot-label">Financial Markets</div>
+                </div>
+                <div class="screenshot-item">
+                    <img src="/page-load-baseline.png" alt="WorldMonitor - Tech View" loading="lazy">
+                    <div class="screenshot-label">Technology Sector</div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button onclick="launchDashboard()" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem; border: none; cursor: pointer;">Launch Dashboard →</button>
+                <button onclick="window.openOnboarding && window.openOnboarding()" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2.5rem; border: none; cursor: pointer;">Get My Monitor</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="section-header">
+            <h2>Choose Your Plan</h2>
+            <p>Start free, upgrade when you need more power</p>
+        </div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3>Hobbyist</h3>
+                <div class="pricing-price">$0<span>/month</span></div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Free forever</p>
+                <ul class="pricing-features">
+                    <li>Full dashboard access</li>
+                    <li>All widgets & data feeds</li>
+                    <li>3 custom monitors</li>
+                    <li>5 saved views</li>
+                    <li>Email alerts</li>
+                    <li>Community support</li>
+                </ul>
+                <a href="/index.html" class="btn btn-secondary" style="width: 100%; margin-top: 1rem;">Start Free</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <h3>Professional</h3>
+                <div class="pricing-price">$9.97<span>/month</span></div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">For power users</p>
+                <ul class="pricing-features">
+                    <li>Everything in Free</li>
+                    <li>15 custom monitors</li>
+                    <li>Unlimited saved views</li>
+                    <li>Webhook alerts</li>
+                    <li>Custom domains</li>
+                    <li>Priority support</li>
+                    <li>Advanced analytics</li>
+                </ul>
+                <button onclick="window.openOnboarding && window.openOnboarding()" class="btn btn-primary" style="width: 100%; margin-top: 1rem; border: none; cursor: pointer;">Get Started</button>
+            </div>
+            
+            <div class="pricing-card">
+                <h3>Enterprise</h3>
+                <div class="pricing-price">$29.97<span>/month</span></div>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">For organizations</p>
+                <ul class="pricing-features">
+                    <li>Everything in Pro</li>
+                    <li>Unlimited monitors</li>
+                    <li>API access</li>
+                    <li>White-label option</li>
+                    <li>SMS alerts</li>
+                    <li>Slack/Discord integration</li>
+                    <li>Dedicated support</li>
+                    <li>Custom integrations</li>
+                </ul>
+                <button onclick="window.openOnboarding && window.openOnboarding()" class="btn btn-primary" style="width: 100%; margin-top: 1rem; border: none; cursor: pointer;">Get Started</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#demo">Demo</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="/index.html">Launch App</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="https://github.com/t4tarzan/worldmonitor" target="_blank">GitHub</a></li>
+                    <li><a href="https://github.com/t4tarzan/worldmonitor/blob/main/README.md" target="_blank">Documentation</a></li>
+                    <li><a href="https://github.com/t4tarzan/worldmonitor/releases" target="_blank">Releases</a></li>
+                    <li><a href="https://github.com/t4tarzan/worldmonitor/issues" target="_blank">Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Variants</h4>
+                <ul>
+                    <li><a href="https://worldmonitor.app">World Monitor</a></li>
+                    <li><a href="https://tech.worldmonitor.app">Tech Monitor</a></li>
+                    <li><a href="https://finance.worldmonitor.app">Finance Monitor</a></li>
+                    <li><a href="https://happy.worldmonitor.app">Happy Monitor</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="https://github.com/t4tarzan/worldmonitor/blob/main/LICENSE" target="_blank">License (AGPL-3.0)</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 WorldMonitor. Open source intelligence dashboard. Licensed under AGPL-3.0.</p>
+        </div>
+    </footer>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10, 15, 10, 0.98); z-index: 10000; backdrop-filter: blur(10px);">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 90%; max-width: 600px;">
+            <div style="font-size: 2rem; font-weight: 700; color: #10b981; margin-bottom: 2rem;">Launching WorldMonitor</div>
+            
+            <div id="loading-message" style="font-size: 1.1rem; color: #a0a0a0; margin-bottom: 2rem; min-height: 30px;">Initializing systems...</div>
+            
+            <div style="width: 100%; height: 8px; background: #1a1a1a; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+                <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); transition: width 0.3s ease-out;"></div>
+            </div>
+            
+            <div id="progress-percent" style="font-size: 0.9rem; color: #6f7f6f;">0%</div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/landing-integration.ts"></script>
+    <script>
+        const loadingMessages = [
+            'Connecting to 170+ data feeds...',
+            'Launching satellite links...',
+            'Connecting news feeds...',
+            'Initializing live cameras...',
+            'Tracking surveillance flights...',
+            'Loading military bases...',
+            'Syncing earthquake monitors...',
+            'Connecting market data...',
+            'Loading conflict zones...',
+            'Initializing AI analysis...',
+            'Preparing map layers...',
+            'Loading infrastructure data...',
+            'Connecting cyber threat feeds...',
+            'Syncing naval vessel tracking...',
+            'Loading weather systems...',
+            'Preparing your dashboard...'
+        ];
+        
+        function launchDashboard() {
+            const overlay = document.getElementById('loading-overlay');
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercent = document.getElementById('progress-percent');
+            const loadingMessage = document.getElementById('loading-message');
+            
+            overlay.style.display = 'block';
+            
+            let progress = 0;
+            let messageIndex = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 8 + 2;
+                
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 500);
+                }
+                
+                progressBar.style.width = progress + '%';
+                progressPercent.textContent = Math.floor(progress) + '%';
+                
+                if (messageIndex < loadingMessages.length && progress > (messageIndex + 1) * (100 / loadingMessages.length)) {
+                    loadingMessage.textContent = loadingMessages[messageIndex];
+                    messageIndex++;
+                }
+            }, 200);
+        }
+    </script>
+</body>
+</html>
