@@ -14,7 +14,8 @@ export const SITE_VARIANT: string = (() => {
   if (h.startsWith('happy.')) return 'happy';
   if (h.startsWith('local.')) return 'local';
 
-  if (h === 'localhost' || h === '127.0.0.1') {
+  // Allow localStorage variant switching on localhost, Vercel previews, and main domain
+  if (h === 'localhost' || h === '127.0.0.1' || h.endsWith('.vercel.app') || h === 'worldmonitor.app' || h === 'www.worldmonitor.app') {
     const stored = localStorage.getItem('worldmonitor-variant');
     if (stored === 'tech' || stored === 'full' || stored === 'finance' || stored === 'happy' || stored === 'local') return stored;
     return import.meta.env.VITE_VARIANT || 'full';
