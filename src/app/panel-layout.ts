@@ -168,7 +168,16 @@ export class PanelLayoutManager implements AppModule {
                title="Good News ${t('common.currentVariant')}">
               <span class="variant-icon">☀️</span>
               <span class="variant-label">Good News</span>
-            </a>` : ''}`;
+            </a>` : ''}
+            <span class="variant-divider"></span>
+            <a href="${vHref('local', 'https://local.worldmonitor.app')}"
+               class="variant-option ${SITE_VARIANT === 'local' ? 'active' : ''}"
+               data-variant="local"
+               ${vTarget('local')}
+               title="${t('header.local') ?? 'Local'}${SITE_VARIANT === 'local' ? ` ${t('common.currentVariant')}` : ''}">
+              <span class="variant-icon">📍</span>
+              <span class="variant-label">${t('header.local') ?? 'Local'}</span>
+            </a>`;
       })()}</div>
           <span class="logo">MONITOR</span><span class="logo-mobile">World Monitor</span><span class="version">v${__APP_VERSION__}</span>${BETA_MODE ? '<span class="beta-badge">BETA</span>' : ''}
           <a href="/landing.html" class="get-monitor-btn" title="Get your own WorldMonitor instance">
@@ -235,6 +244,7 @@ export class PanelLayoutManager implements AppModule {
           { key: 'full', icon: '🌍', label: t('header.world') },
           { key: 'tech', icon: '💻', label: t('header.tech') },
           { key: 'finance', icon: '📈', label: t('header.finance') },
+          { key: 'local', icon: '📍', label: t('header.local') ?? 'Local' },
         ];
         if (SITE_VARIANT === 'happy') variants.push({ key: 'happy', icon: '☀️', label: 'Good News' });
         return variants.map(v =>

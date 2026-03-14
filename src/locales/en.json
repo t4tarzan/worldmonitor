@@ -124,6 +124,8 @@
   "header": {
     "world": "WORLD",
     "tech": "TECH",
+    "finance": "FINANCE",
+    "local": "LOCAL",
     "live": "LIVE",
     "search": "Search",
     "settings": "SETTINGS",
@@ -136,7 +138,6 @@
     "viewOnGitHub": "View on GitHub",
     "filterSources": "Filter sources...",
     "sourcesEnabled": "{{enabled}}/{{total}} enabled",
-    "finance": "FINANCE",
     "toggleTheme": "Toggle dark/light mode",
     "panelDisplayCaption": "Choose which panels to show on the dashboard",
     "tabGeneral": "General",
@@ -1664,6 +1665,7 @@
       "regionMiddleEast": "Middle East",
       "regionAfrica": "Africa",
       "regionOceania": "Oceania",
+      "regionTelugu": "Telugu",
       "invalidHandle": "Enter a valid YouTube handle (e.g. @ChannelName)",
       "channelNotFound": "YouTube channel not found",
       "verifying": "Verifying…"

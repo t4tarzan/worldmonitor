@@ -3,6 +3,7 @@
 // VITE_VARIANT=tech → tech.worldmonitor.app (tech-focused)
 // VITE_VARIANT=full → worldmonitor.app (geopolitical)
 // VITE_VARIANT=finance → finance.worldmonitor.app (markets/trading)
+// VITE_VARIANT=local → local.worldmonitor.app (hyperlocal/Hyderabad)
 
 export { SITE_VARIANT } from './variant';
 
@@ -117,3 +118,10 @@ export {
 
 // Gulf FDI investment database
 export { GULF_INVESTMENTS } from './gulf-fdi';
+
+// Local variant - hyperlocal dashboard with zone-based content
+export {
+  DEFAULT_COORDINATES,
+  ZONES,
+  type ZoneConfig,
+} from './variants/local';

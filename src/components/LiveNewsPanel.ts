@@ -164,6 +164,25 @@ export const OPTIONAL_LIVE_CHANNELS: LiveChannel[] = [
   { id: 'aljazeera-balkans', name: 'Al Jazeera Balkans', handle: '@AlJazeeraBalkans' },
   // Oceania
   { id: 'abc-news-au', name: 'ABC News Australia', handle: '@abcnewsaustralia', fallbackVideoId: 'vOTiJkg1voo' },
+  // India - Telugu (for Local variant)
+  { id: 'tv9-telugu', name: 'TV9 Telugu', handle: '@TV9TeluguLive' },
+  { id: 'sakshi-tv', name: 'Sakshi TV', handle: '@SakshiTV' },
+  { id: 'v6-news', name: 'V6 News', handle: '@V6News' },
+  { id: 'ntv-telugu', name: 'NTV Telugu', handle: '@NTVTeluguIndia' },
+  { id: 'abn-telugu', name: 'ABN Telugu', handle: '@abnaborginalnews' },
+  { id: 't-news', name: 'T News', handle: '@TaborginalnewsTelugu' },
+  { id: 'etv-telangana', name: 'ETV Telangana', handle: '@eaborginalnewsTelangana' },
+  { id: '10tv-telugu', name: '10TV Telugu', handle: '@10aborginalnewsTelugu' },
+];
+
+// Telugu channels for Local variant
+const TELUGU_LIVE_CHANNELS: LiveChannel[] = [
+  { id: 'tv9-telugu', name: 'TV9 Telugu', handle: '@TV9TeluguLive' },
+  { id: 'sakshi-tv', name: 'Sakshi TV', handle: '@SakshiTV' },
+  { id: 'v6-news', name: 'V6 News', handle: '@V6News' },
+  { id: 'ntv-telugu', name: 'NTV Telugu', handle: '@NTVTeluguIndia' },
+  { id: 'abn-telugu', name: 'ABN Telugu', handle: '@abnaborginalnews' },
+  { id: 'india-today', name: 'India Today', handle: '@IndiaToday' },
 ];
 
 const _REGION_ENTRIES: { key: string; labelKey: string; channelIds: string[] }[] = [
@@ -174,13 +193,14 @@ const _REGION_ENTRIES: { key: string; labelKey: string; channelIds: string[] }[]
   { key: 'me', labelKey: 'components.liveNews.regionMiddleEast', channelIds: ['alarabiya', 'aljazeera', 'al-hadath', 'sky-news-arabia', 'trt-world', 'iran-intl', 'cgtn-arabic', 'kan-11', 'asharq-news', 'aljazeera-arabic'] },
   { key: 'africa', labelKey: 'components.liveNews.regionAfrica', channelIds: ['africanews', 'channels-tv', 'ktn-news', 'enca', 'sabc-news', 'arise-news'] },
   { key: 'oc', labelKey: 'components.liveNews.regionOceania', channelIds: ['abc-news-au'] },
+  { key: 'telugu', labelKey: 'components.liveNews.regionTelugu', channelIds: ['tv9-telugu', 'sakshi-tv', 'v6-news', 'ntv-telugu', 'abn-telugu', 't-news', 'etv-telangana', '10tv-telugu'] },
 ];
 export const OPTIONAL_CHANNEL_REGIONS: { key: string; labelKey: string; channelIds: string[] }[] = [
   { key: 'all', labelKey: 'components.liveNews.regionAll', channelIds: _REGION_ENTRIES.flatMap((r) => r.channelIds) },
   ..._REGION_ENTRIES,
 ];
 
-const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech' ? TECH_LIVE_CHANNELS : SITE_VARIANT === 'happy' ? [] : FULL_LIVE_CHANNELS;
+const DEFAULT_LIVE_CHANNELS = SITE_VARIANT === 'tech' ? TECH_LIVE_CHANNELS : SITE_VARIANT === 'local' ? TELUGU_LIVE_CHANNELS : SITE_VARIANT === 'happy' ? [] : FULL_LIVE_CHANNELS;
 
 /** Default channel list for the current variant (for restore in channel management). */
 export function getDefaultLiveChannels(): LiveChannel[] {
