@@ -25,7 +25,8 @@ export type RuntimeSecretKey =
   | 'WORLDMONITOR_API_KEY'
   | 'WTO_API_KEY'
   | 'AVIATIONSTACK_API'
-  | 'ICAO_API_KEY';
+  | 'ICAO_API_KEY'
+  | 'SHODAN_API_KEY';
 
 export type RuntimeFeatureId =
   | 'aiGroq'

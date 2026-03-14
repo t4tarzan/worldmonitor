@@ -22,6 +22,7 @@ export const SIGNUP_URLS: Partial<Record<RuntimeSecretKey, string>> = {
   WTO_API_KEY: 'https://apiportal.wto.org/',
   AVIATIONSTACK_API: 'https://aviationstack.com/signup/free',
   ICAO_API_KEY: 'https://dataservices.icao.int/',
+  SHODAN_API_KEY: 'https://account.shodan.io/',
 };
 
 export const PLAINTEXT_KEYS = new Set<RuntimeSecretKey>([
@@ -58,6 +59,7 @@ export const HUMAN_LABELS: Record<RuntimeSecretKey, string> = {
   WTO_API_KEY: 'WTO API Key',
   AVIATIONSTACK_API: 'AviationStack API Key',
   ICAO_API_KEY: 'ICAO NOTAM API Key',
+  SHODAN_API_KEY: 'Shodan API Key',
 };
 
 export interface SettingsCategory {

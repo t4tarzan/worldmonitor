@@ -2,6 +2,7 @@
 // Provides device discovery, statistics, and vulnerability data for coordinates
 
 import { getShodanZoneQueries } from './location';
+import { getRuntimeConfigSnapshot } from './runtime-config';
 import type { ZoneConfig } from '@/config/variants/local';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -55,36 +56,30 @@ export interface ShodanState {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// STORAGE
+// API KEY ACCESS
 // ═══════════════════════════════════════════════════════════════════════════
 
-const API_KEY_STORAGE = 'worldmonitor-shodan-api-key';
 const CACHE_STORAGE = 'worldmonitor-shodan-cache';
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes cache
 
-export function saveShodanApiKey(apiKey: string): void {
+/**
+ * Get Shodan API key from runtime config (environment variable)
+ */
+export function getShodanApiKey(): string | null {
   try {
-    localStorage.setItem(API_KEY_STORAGE, apiKey);
+    const config = getRuntimeConfigSnapshot();
+    return config.secrets['SHODAN_API_KEY']?.value ?? null;
   } catch (e) {
-    console.warn('[Shodan] Failed to save API key:', e);
-  }
-}
-
-export function loadShodanApiKey(): string | null {
-  try {
-    return localStorage.getItem(API_KEY_STORAGE);
-  } catch (e) {
-    console.warn('[Shodan] Failed to load API key:', e);
+    console.warn('[Shodan] Failed to get API key from runtime config:', e);
     return null;
   }
 }
 
-export function clearShodanApiKey(): void {
-  try {
-    localStorage.removeItem(API_KEY_STORAGE);
-  } catch (e) {
-    console.warn('[Shodan] Failed to clear API key:', e);
-  }
+/**
+ * Check if Shodan API key is configured
+ */
+export function isShodanConfigured(): boolean {
+  return !!getShodanApiKey();
 }
 
 interface CachedData {

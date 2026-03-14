@@ -3,8 +3,8 @@
 
 import {
   fetchShodanData,
-  loadShodanApiKey,
-  saveShodanApiKey,
+  getShodanApiKey,
+  isShodanConfigured,
   validateShodanApiKey,
   getShodanApiInfo,
   getDeviceIcon,
@@ -17,7 +17,7 @@ import { loadLocation } from '@/services/location';
 import { escapeHtml } from '@/utils/sanitize';
 
 export interface ShodanPanelState {
-  apiKey: string | null;
+  apiKeyConfigured: boolean;
   apiKeyValid: boolean;
   apiInfo: { queryCredits: number; scanCredits: number; plan: string } | null;
   zones: ShodanZoneData[];
@@ -30,7 +30,7 @@ export interface ShodanPanelState {
 export class ShodanPanel {
   private container: HTMLElement;
   private state: ShodanPanelState = {
-    apiKey: null,
+    apiKeyConfigured: false,
     apiKeyValid: false,
     apiInfo: null,
     zones: [],
@@ -43,12 +43,12 @@ export class ShodanPanel {
 
   constructor(container: HTMLElement) {
     this.container = container;
-    this.state.apiKey = loadShodanApiKey();
+    this.state.apiKeyConfigured = isShodanConfigured();
     this.render();
   }
 
   async init(): Promise<void> {
-    if (this.state.apiKey) {
+    if (this.state.apiKeyConfigured) {
       await this.validateAndFetch();
     } else {
       this.render();
@@ -70,7 +70,12 @@ export class ShodanPanel {
   }
 
   private async validateAndFetch(): Promise<void> {
-    if (!this.state.apiKey) return;
+    const apiKey = getShodanApiKey();
+    if (!apiKey) {
+      this.state.apiKeyConfigured = false;
+      this.render();
+      return;
+    }
     
     this.state.loading = true;
     this.state.error = null;
@@ -78,18 +83,18 @@ export class ShodanPanel {
     
     try {
       // Validate API key
-      const isValid = await validateShodanApiKey(this.state.apiKey);
+      const isValid = await validateShodanApiKey(apiKey);
       this.state.apiKeyValid = isValid;
       
       if (!isValid) {
-        this.state.error = 'Invalid API key';
+        this.state.error = 'Invalid Shodan API key in settings';
         this.state.loading = false;
         this.render();
         return;
       }
       
       // Get API info
-      this.state.apiInfo = await getShodanApiInfo(this.state.apiKey);
+      this.state.apiInfo = await getShodanApiInfo(apiKey);
       
       // Fetch zone data
       await this.refresh();
@@ -101,13 +106,14 @@ export class ShodanPanel {
   }
 
   async refresh(): Promise<void> {
-    if (!this.state.apiKey || !this.state.apiKeyValid) return;
+    const apiKey = getShodanApiKey();
+    if (!apiKey || !this.state.apiKeyValid) return;
     
     this.state.loading = true;
     this.render();
     
     try {
-      this.state.zones = await fetchShodanData(this.state.apiKey, { useCache: false });
+      this.state.zones = await fetchShodanData(apiKey, { useCache: false });
       this.state.lastUpdate = new Date();
       this.state.error = null;
     } catch (error) {
@@ -116,12 +122,6 @@ export class ShodanPanel {
     
     this.state.loading = false;
     this.render();
-  }
-
-  private handleApiKeySubmit(apiKey: string): void {
-    this.state.apiKey = apiKey;
-    saveShodanApiKey(apiKey);
-    this.validateAndFetch();
   }
 
   private setActiveTab(tab: ShodanPanelState['activeTab']): void {
@@ -174,9 +174,9 @@ export class ShodanPanel {
   private render(): void {
     const location = loadLocation();
     
-    // If no API key, show setup form
-    if (!this.state.apiKey || !this.state.apiKeyValid) {
-      this.renderApiKeyForm();
+    // If no API key configured, show setup message
+    if (!this.state.apiKeyConfigured || !this.state.apiKeyValid) {
+      this.renderSetupMessage();
       return;
     }
     
@@ -243,7 +243,7 @@ export class ShodanPanel {
     this.attachEventListeners();
   }
 
-  private renderApiKeyForm(): void {
+  private renderSetupMessage(): void {
     this.container.innerHTML = `
       <div class="shodan-panel">
         <div class="shodan-header">
@@ -254,10 +254,6 @@ export class ShodanPanel {
         </div>
         
         <div class="shodan-setup">
-          <p class="shodan-setup-text">
-            Enter your Shodan API key to enable local device intelligence.
-          </p>
-          
           ${this.state.error ? `
             <div class="shodan-error">
               <span class="error-icon">⚠️</span>
@@ -265,27 +261,20 @@ export class ShodanPanel {
             </div>
           ` : ''}
           
-          <div class="shodan-api-form">
-            <input 
-              type="password" 
-              id="shodanApiKeyInput" 
-              class="shodan-api-input" 
-              placeholder="Enter Shodan API Key"
-              value="${escapeHtml(this.state.apiKey ?? '')}"
-            />
-            <button class="shodan-api-submit" id="shodanApiKeySubmit">
-              ${this.state.loading ? 'Validating...' : 'Connect'}
-            </button>
-          </div>
+          <p class="shodan-setup-text">
+            ${this.state.apiKeyConfigured 
+              ? 'Shodan API key is configured but validation failed. Check your key in Settings.'
+              : 'Configure your Shodan API key in Settings to enable local device intelligence.'}
+          </p>
           
           <p class="shodan-setup-hint">
+            Add <code>SHODAN_API_KEY</code> in Settings → Security & Threats
+            <br/>
             Get your API key from <a href="https://account.shodan.io" target="_blank" rel="noopener">account.shodan.io</a>
           </p>
         </div>
       </div>
     `;
-    
-    this.attachEventListeners();
   }
 
   private renderTabContent(
@@ -473,24 +462,6 @@ export class ShodanPanel {
         if (tabName) this.setActiveTab(tabName);
       });
     });
-    
-    // API key form
-    const apiKeyInput = this.container.querySelector('#shodanApiKeyInput') as HTMLInputElement;
-    const apiKeySubmit = this.container.querySelector('#shodanApiKeySubmit');
-    
-    if (apiKeySubmit && apiKeyInput) {
-      apiKeySubmit.addEventListener('click', () => {
-        const apiKey = apiKeyInput.value.trim();
-        if (apiKey) this.handleApiKeySubmit(apiKey);
-      });
-      
-      apiKeyInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          const apiKey = apiKeyInput.value.trim();
-          if (apiKey) this.handleApiKeySubmit(apiKey);
-        }
-      });
-    }
     
     // Refresh button
     const refreshBtn = this.container.querySelector('#shodanRefreshBtn');
