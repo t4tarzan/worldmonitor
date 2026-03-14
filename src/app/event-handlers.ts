@@ -282,7 +282,7 @@ export class EventHandlerManager implements AppModule {
       trackThemeChanged(next);
     });
 
-    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.endsWith('.vercel.app');
     if (this.ctx.isDesktopApp || isLocalDev) {
       this.ctx.container.querySelectorAll<HTMLAnchorElement>('.variant-option').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -296,6 +296,17 @@ export class EventHandlerManager implements AppModule {
         });
       });
     }
+    // Always handle 'local' variant click since it has no subdomain
+    this.ctx.container.querySelectorAll<HTMLAnchorElement>('.variant-option[data-variant="local"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        if (SITE_VARIANT !== 'local') {
+          e.preventDefault();
+          trackVariantSwitch(SITE_VARIANT, 'local');
+          localStorage.setItem('worldmonitor-variant', 'local');
+          window.location.reload();
+        }
+      });
+    });
 
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     if (!this.ctx.isDesktopApp && fullscreenBtn) {
@@ -393,12 +404,13 @@ export class EventHandlerManager implements AppModule {
     overlay.addEventListener('click', () => this.closeMobileMenu());
     closeBtn.addEventListener('click', () => this.closeMobileMenu());
 
-    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname.endsWith('.vercel.app');
     menu.querySelectorAll<HTMLButtonElement>('.mobile-menu-variant').forEach(btn => {
       btn.addEventListener('click', () => {
         const variant = btn.dataset.variant;
         if (variant && variant !== SITE_VARIANT) {
-          if (this.ctx.isDesktopApp || isLocalDev) {
+          // 'local' variant has no subdomain, always use localStorage
+          if (this.ctx.isDesktopApp || isLocalDev || variant === 'local') {
             trackVariantSwitch(SITE_VARIANT, variant);
             localStorage.setItem('worldmonitor-variant', variant);
             window.location.reload();
