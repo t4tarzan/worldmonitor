@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "cli-anything": {
+      "command": "python3",
+      "args": ["/home/Ubuntu/worldmonitor/cli-anything-mcp/server.py"],
+      "env": {
+        "CLI_ANYTHING_PATH": "/home/kali/.openclaw/workspace/cli-anything"
+      },
+      "description": "Access to CLI-Anything generated tools for GIMP, Blender, Audacity, LibreOffice, and more"
+    }
+  }
+}
